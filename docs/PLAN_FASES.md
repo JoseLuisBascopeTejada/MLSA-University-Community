@@ -19,6 +19,7 @@ One phase at a time. Each phase ends with: verification commands, `PROJECT_STATE
   - T1.0-e `.vscode/extensions.json`: keep only `bradlc.vscode-tailwindcss`.
   - T1.0-f Keep `button.tsx` (Base UI, no Radix — approved).
   - T1.0-g PROJECT_STATE.md evidence rewrite (A6 fixes + 4 self-checks).
+  - T1.0-h Verify Tailwind is really active: grep `@import "tailwindcss"` in src/; inspect `shadcn/tailwind.css` in node_modules for a tailwindcss import; grep built CSS for App.tsx classes (counts pasted). If missing, add `@import "tailwindcss";` first line of src/index.css, rebuild, paste new counts + size.
 - T1.1 Tokens for both themes + area colors (AA contrast verified).
 - T1.2 `useTheme` + inline no-flash script + toggle component.
 - T1.3 i18n dictionaries + `useI18n` + browser-language detection + toggle.

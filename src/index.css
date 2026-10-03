@@ -1,3 +1,4 @@
+@import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
@@ -15,9 +16,9 @@
 
   --popover-foreground: oklch(0.145 0 0);
 
-  --primary: oklch(0.205 0 0);
+  --primary: #0078D4;
 
-  --primary-foreground: oklch(0.985 0 0);
+  --primary-foreground: #ffffff;
 
   --secondary: oklch(0.97 0 0);
 
@@ -31,13 +32,13 @@
 
   --accent-foreground: oklch(0.205 0 0);
 
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: oklch(0.55 0.22 27.325);
 
   --input: oklch(0.922 0 0);
 
   --border: oklch(0.922 0 0);
 
-  --ring: oklch(0.708 0 0);
+  --ring: #0078D4;
 
   --chart-1: oklch(0.87 0 0);
 
@@ -73,6 +74,9 @@
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --color-area: var(--area);
+  --color-area-foreground: var(--area-foreground);
+  --color-area-text: var(--area-text);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -120,18 +124,18 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: #3a9bdc;
+  --primary-foreground: #06121f;
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: oklch(0.735 0.185 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: #6cb8f0;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -145,6 +149,49 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Area colors — ONLY inside their own area sections (SPEC §4, ARCHITECTURE §6).
+   --area: fill, --area-foreground: text on that fill,
+   --area-text: area-colored text on the page surface (per-theme variant). */
+[data-area="rrhh"] {
+  --area: #7fba00;
+  --area-foreground: #0e1400;
+  --area-text: #4a7300;
+}
+
+[data-area="finanzas"] {
+  --area: #ffb900;
+  --area-foreground: #241a00;
+  --area-text: #7a5200;
+}
+
+[data-area="marketing"] {
+  --area: #f25022;
+  --area-foreground: #1c0d00;
+  --area-text: #b53a10;
+}
+
+[data-area="operativa"] {
+  --area: #0078d4;
+  --area-foreground: #ffffff;
+  --area-text: #0078d4;
+}
+
+.dark [data-area="rrhh"] {
+  --area-text: #b9e04d;
+}
+
+.dark [data-area="finanzas"] {
+  --area-text: #ffc933;
+}
+
+.dark [data-area="marketing"] {
+  --area-text: #ff9e73;
+}
+
+.dark [data-area="operativa"] {
+  --area-text: #3a9bdc;
 }
 
 @layer base {

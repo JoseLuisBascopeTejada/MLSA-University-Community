@@ -38,11 +38,11 @@ Status: **approved by user (with the amendments below).** Versions are NOT pinne
    ├─ hooks/          (useTheme, useI18n, useReducedMotion, useInView)
    ├─ i18n/           (es.ts, en.ts, index.ts)
    ├─ lib/            (utils.ts, motion.ts, consent.ts, config.ts)
-   └─ styles/         (globals.css: tokens for both themes)
+   └─ index.css        (Tailwind + shadcn import; design tokens for both themes)
 ```
 
 ## 4. Theme system
-- Tokens as CSS variables in `globals.css`; `.dark` class on `<html>`. Light theme = inverted surfaces, same brand hues, contrast re-checked.
+- Tokens as CSS variables in `src/index.css` (components.json points the shadcn CLI there); `.dark` class on `<html>`. Light theme = inverted surfaces, same brand hues, contrast re-checked.
 - Initial theme: stored choice, else `prefers-color-scheme`, else dark. Stored in `localStorage` key `mlsa-theme` (strictly necessary preference, see LEGAL.md).
 - Inline script in `index.html` sets the class before paint (no flash).
 

@@ -47,7 +47,7 @@ Status: **approved by user (with the amendments below).** Versions are NOT pinne
 - Inline script in `index.html` sets the class before paint (no flash).
 
 ## 5. Language system
-- Initial language: stored choice (`mlsa-lang`), else `navigator.languages` (starts with `en` -> EN), else ES.
+- Initial language: stored choice (`mlsa-lang`); else walk `navigator.languages` in order and pick the first tag whose primary subtag is `es` or `en`; else ES. Persist only on explicit user choice.
 - Toggle in navbar. Updates `<html lang>`, `<title>` and meta description.
 - Crossfade + blur on text swap (see section 7).
 

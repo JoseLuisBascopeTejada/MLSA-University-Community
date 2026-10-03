@@ -22,6 +22,7 @@ One phase at a time. Each phase ends with: verification commands, `PROJECT_STATE
   - T1.0-h Verify Tailwind is really active: grep `@import "tailwindcss"` in src/; inspect `shadcn/tailwind.css` in node_modules for a tailwindcss import; grep built CSS for App.tsx classes (counts pasted). If missing, add `@import "tailwindcss";` first line of src/index.css, rebuild, paste new counts + size.
 - T1.1 Tokens for both themes + area colors (AA contrast verified).
 - T1.2 `useTheme` + inline no-flash script + toggle component.
+- T1.2-b Theme context: shared provider so several toggles stay in sync (context+hook module + separate provider component file to avoid only-export-components warnings); same { theme, setTheme, toggle } API and behavior; mounted in main.tsx; lint shows no new warnings vs baseline.
 - T1.3 i18n dictionaries + `useI18n` + browser-language detection + toggle.
 - T1.4 `src/lib/motion.ts` presets + `useReducedMotion`.
 - Accept: toggles persist across reload; no theme flash; `<html lang>` updates.

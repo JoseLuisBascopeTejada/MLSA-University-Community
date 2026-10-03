@@ -3,13 +3,13 @@
 Evidence-only log. Rules are in `AGENTS.md` section 5. Do not write anything here that you have not verified in this repo.
 
 ## Current phase
-FASE 1 — IN PROGRESS (T1.0–T1.2 executed, pending user approval). T1.3–T1.4 NOT STARTED. (T1.0 approved by user 2026-10-03 — placeholder rendered in browser.)
+FASE 1 — IN PROGRESS (T1.0–T1.4 executed, pending user approval). FASE 2 NOT STARTED. (T1.0–T1.2 approved by user 2026-10-03 — colors and both themes reviewed in browser.)
 
 ## Phase status
 | FASE | Name | Status | Evidence |
 |---|---|---|---|
 | 0 | Bootstrap | DONE — approved by user | Prior FASE 0 verification (typecheck/lint/build pass, `docker compose up -d web` + HTTP 200); user approval recorded in BUILD prompt 2026-10-03 |
-| 1 | Foundations | IN PROGRESS (T1.0–T1.2) | This section + T1.0-h/T1.1/T1.2 below. `docker compose run --rm web npm run typecheck` pass (tsc -b, no errors); `npm run lint` 0 errors 1 warning on button.tsx (accepted by user); `npm run contrast` ALL REQUIRED PAIRS PASS (exit 0); `npm run build` pass (1934 modules, CSS 32.07 kB, JS 264.63 kB) + postbuild copied dist/index.html to dist/404.html; `docker compose up -d web` + Invoke-WebRequest http://localhost:5173 = 200 OK. NOTE: HTTP 200 proves the dev server responds; it does NOT prove React mounted or the toggle works — user checks in browser (manual checklist in T1.2). |
+| 1 | Foundations | IN PROGRESS (T1.0–T1.4) | This section + T1.0-h/T1.1/T1.2/T1.2-b/T1.3/T1.4 below. `docker compose run --rm web npm run typecheck` pass (tsc -b, no errors); `npm run lint` 0 errors 1 warning on button.tsx (accepted by user; 22 files, no new warnings); `npm run contrast` ALL REQUIRED PAIRS PASS (exit 0); `npm run build` pass (1941 modules, CSS 32.50 kB, JS 268.72 kB) + postbuild copied dist/index.html to dist/404.html. Browser-visible results (toggles, lang switch, no-flash, 360/1440px) are UNVERIFIED — user checklists in T1.2/T1.3. |
 | 2 | Layout shell | NOT STARTED | — |
 | 3 | Content sections | NOT STARTED | — |
 | 4 | Animation layer | NOT STARTED | — |
@@ -55,10 +55,12 @@ mlsa-university-community@0.0.0 /app
 +-- typescript@6.0.3
 `-- vite@8.3.2
 ```
+Changes after that snapshot (2026-10-03, T1.4 + cleanup): `motion-dom@^14.0.0` ADDED to dependencies (`npm install motion-dom@14.0.0` → `grep -n motion-dom package.json` = line 25 `"motion-dom": "^14.0.0"`); `shadcn@^4.21.1` MOVED dependencies → devDependencies (`npm uninstall shadcn && npm install -D shadcn@^4.21.1`; `git diff -- package.json` shows exactly those two hunks, version unchanged). Proof the audit belongs to shadcn: between the two commands `npm audit` reported **found 0 vulnerabilities** (75 packages); after reinstall, 7 high again.
 - react ^19.2.8, react-dom ^19.2.8 (Vite react-ts template; installed 19.3.0)
 - vite ^8.3.0, @vitejs/plugin-react ^6.1.1, typescript ~6.0.2, oxlint ^1.81.0, @types/node ^24.13.3, @types/react ^19.2.18, @types/react-dom ^19.2.7 (template ranges; installed: vite 8.3.2, typescript 6.0.3, oxlint 1.86.0, @types/node 24.19.1, @types/react 19.3.0, @types/react-dom 19.3.0)
 - tailwindcss ^4.3.3, @tailwindcss/vite ^4.3.3 — Tailwind major installed: v4
-- framer-motion ^14.0.0 (installed 14.0.0)
+- framer-motion ^14.0.0 (installed 14.0.0) + motion-dom ^14.0.0 (installed 14.0.0; framer-motion requires exactly 14.0.0 per its package.json line 97 — direct dep added in T1.4 for `Transition`/`Variants` types, which framer-motion does NOT re-export)
+- shadcn ^4.21.1 now in devDependencies (moved from dependencies in T1.4 cleanup; CLI tooling, never bundled — nothing in `src/` imports it)
 - react-router ^8.4.0 (installed 8.4.0)
 - @fontsource-variable/inter ^5.3.0 (installed 5.3.0; the ONLY font dep — `@fontsource-variable/geist` uninstalled in T1.0-c)
 - lucide-react ^1.51.0 (installed 1.51.0)
@@ -112,7 +114,7 @@ mlsa-university-community@0.0.0 /app
 
 ### npm audit — read-only report (2026-10-03, NO fix run)
 - `docker compose run --rm web npm audit` → **7 high, 0 others**. All 7 are the SAME root advisory counted along the chain: `braces*` GHSA-vfj7-8cjw-p6xm (stack-exhaustion DoS via deeply nested patterns) → `micromatch` → `fast-glob` → `@shadcn/registry` → `shadcn` (plus the `@ts-morph/common` → `ts-morph` branch under the same tree). Fix would force `shadcn@1.0.0` (breaking) — NOT run per instruction.
-- Blast radius: all vulnerable packages live under the `shadcn` CLI dependency tree = **build-time tooling only**. `shadcn` is listed under `dependencies` (not devDependencies), but it does NOT ship in the production bundle: nothing in `src/` imports it (Vite bundles only imported modules; dist JS is app code). It matters for install surface/supply chain and future `THIRD_PARTY_NOTICES` (FASE 7), not for what browsers download.
+- Blast radius: all vulnerable packages live under the `shadcn` CLI dependency tree = **build-time tooling only**. `shadcn` was listed under `dependencies` at audit time (moved to devDependencies afterwards, see deps section); it does NOT ship in the production bundle: nothing in `src/` imports it (Vite bundles only imported modules; dist JS is app code). It matters for install surface/supply chain and future `THIRD_PARTY_NOTICES` (FASE 7), not for what browsers download.
 
 ### T1.1 design tokens (2026-10-03)
 - Tokens stay in `src/index.css` (components.json `css` target). ARCHITECTURE.md §3 tree amended (`index.css` replaces `styles/globals.css`) + §4 wording (`src/index.css` instead of `globals.css`) — docs-only edits.
@@ -124,11 +126,34 @@ mlsa-university-community@0.0.0 /app
 - No color literals outside tokens: `grep -R -n -E -e "#[0-9a-fA-F]{3,8}" -e "oklch\(" -e "rgb[a]?\(" -e "hsl[a]?\(" /app/src` → hits ONLY in `src/index.css` (75 lines listed, all token declarations).
 - TEMP preview: `src/App.tsx` rewritten (marked `TEMP: delete in FASE 3`): ThemeToggle, primary+outline Buttons, foreground/muted/primary text samples, 4 `data-area` Cards using `bg-area`/`text-area-foreground`/`text-area-text`. Hardcoded strings exist ONLY there.
 
-### T1.2 theme (2026-10-03)
-- Files (all `ls`-verified): `src/lib/config.ts` (`THEME_KEY='mlsa-theme'`, `LANG_KEY`, `CONSENT_KEY`; typed `readEnv` with `unknown` narrow + `''` fallback for `VITE_SITE_URL`, `VITE_WHATSAPP_URL`, `VITE_CONTACT_EMAIL`, `VITE_SPLINE_SCENE_URL`), `src/hooks/useTheme.ts` (`{ theme, setTheme, toggle }`; persist ONLY on explicit choice; `matchMedia('(prefers-color-scheme: light)')` listener while no stored choice, with cleanup + stored-recheck in handler; all storage in try/catch), `src/components/ThemeToggle.tsx` (shadcn `Button` ghost icon, lucide Sun/Moon swap, `label` prop → `aria-label`, `aria-pressed`, focus via Button styles; NO morph — FASE 4).
+### T1.2 theme (2026-10-03; restructured by T1.2-b, same behavior)
+- Files (all `ls`-verified): `src/lib/config.ts` (`THEME_KEY='mlsa-theme'`, `LANG_KEY`, `CONSENT_KEY`; typed `readEnv` with `unknown` narrow + `''` fallback for `VITE_SITE_URL`, `VITE_WHATSAPP_URL`, `VITE_CONTACT_EMAIL`, `VITE_SPLINE_SCENE_URL`), `src/hooks/useTheme.ts` (NOW: `Theme` type + `ThemeContext` + `useTheme()` hook reading context, same `{ theme, setTheme, toggle }` API), `src/components/ThemeProvider.tsx` (state, persist-on-explicit-choice, OS-follow listener with cleanup, try/catch storage, `<html>` sync; sole export is the component), `src/components/ThemeToggle.tsx` (shadcn `Button` ghost icon, lucide Sun/Moon swap, `label` prop → `aria-label`, `aria-pressed`, focus via Button styles; NO morph — FASE 4). Provider mounted in `src/main.tsx` (`ThemeProvider > App`).
 - `index.html`: `<meta name="color-scheme" content="dark light">` + pre-paint inline script (stored → OS-light→light else dark; try/catch defaults dark; key duplicated with comment pointing to `config.ts`).
-- Final verify (2026-10-03): typecheck pass; lint `Found 1 warning and 0 errors … on 13 files` (same accepted buttonVariants warning); build pass (`1934 modules transformed`, `index-5kTAkiLp.css 32.07 kB`, `index-Z1O6nhH9.js 264.63 kB`, postbuild OK); `docker compose up -d web` Running + HTTP 200.
+- T1.2 verify (2026-10-03): typecheck pass; lint `Found 1 warning and 0 errors … on 13 files` (same accepted buttonVariants warning); build pass (`1934 modules transformed`, `index-5kTAkiLp.css 32.07 kB`, `index-Z1O6nhH9.js 264.63 kB`, postbuild OK); `docker compose up -d web` Running + HTTP 200.
 - UNVERIFIED (no browser access) — user manual checklist: (1) toggle switches sun/moon + whole preview incl. area cards; (2) reload keeps choice (`mlsa-theme` in localStorage); (3) clear storage + OS light → light initial, OS dark → dark initial; (4) hard reload with throttled network shows no flash (dark stays dark, no light blink); (5) preview readable at 360px and 1440px in both themes.
+
+### T1.2-b theme context (2026-10-03)
+- Split (no new lint warnings): `useTheme.ts` exports `Theme` type + `ThemeContext` const (covered by `allowConstantExport`) + `useTheme` hook (throws outside provider); `ThemeProvider.tsx` exports only the component. PLAN_FASES.md gained the T1.2-b line.
+- Verify: typecheck pass; `npm run lint` → `Found 1 warning and 0 errors … on 14 files` — the ONLY warning is the accepted buttonVariants one (baseline held); final build (with T1.3/T1.4) below.
+
+### T1.3 i18n (2026-10-03)
+- Files (`ls`-verified): `src/i18n/es.ts` (defines shape + `export type Dict = typeof es`), `src/i18n/en.ts` (`export const en: Dict` — legal wording verbatim from LEGAL.md §4), `src/i18n/index.ts` (`Locale`, `dictionaries`, `MessagePath`/`MessageKey` dotted-leaf type, `getMessage` runtime lookup with key fallback, no `any`), `src/hooks/useI18n.ts` (context + `useI18n`, same split rule), `src/components/I18nProvider.tsx` (detection: stored → walk `navigator.languages` primary subtags es/en → `'es'`; persist on explicit choice only; try/catch storage; effect sets `documentElement.lang` + `document.title` + meta description), `src/components/LangToggle.tsx` (outline sm Button, shows target language name from dict, `aria-label` from `t('language.toggle')`).
+- Content = chrome only: nav×6, theme/language labels, footer non-affiliation (verbatim) + cookie-settings, 5 legal titles, meta title (same both) + `[TODO-CONTENT]` descriptions. ARCHITECTURE.md §5 updated to the refined detection rule (docs-only).
+- Typing PROOF: deleted `faq` from en.ts → `npm run typecheck` failed with `src/i18n/en.ts(7,3): error TS2741: Property 'faq' is missing in type '{ home: string; ... }' but required in type '{ ... faq: string; }'`. Restored → typecheck clean (no errors).
+- Wiring: `ThemeToggle label={t('theme.toggle')}`; TEMP preview adds `LangToggle` + a SECOND `ThemeToggle` (sync proof — shared context) + nav/footer `t()` samples; `main.tsx` now `ThemeProvider > I18nProvider > App`. Still TEMP-marked, hardcoded strings only there.
+- UNVERIFIED (no browser access) — user manual checklist: (1) language toggle flips preview labels (nav, footer, toggle names); (2) `<html lang>` flips es↔en + tab title stays "MLSA University Community"; (3) reload keeps choice (`mlsa-lang`); (4) storage cleared + browser language English → starts EN; (5) two theme toggles stay in sync (click either, both icons flip).
+
+### T1.4 motion (2026-10-03)
+- API verified from installed packages (not memory): `useReducedMotion(): boolean | null` (framer-motion/dist/index.d.ts:1302) + `useReducedMotionConfig` (:1304); `MotionConfig`/`MotionConfigProps` (:614/:634) with `ReducedMotionConfig = "always" | "never" | "user"` (:208); `Transition`/`Variants` are NOT re-exported by framer-motion (absent from :1752 export list, `Variants` absent from the whole d.ts) — they come from motion-dom (export list :5555 has `type Transition`, `type Variants`), which framer-motion@14.0.0 requires at exactly 14.0.0 (its package.json:97; installed 14.0.0). Hence the direct `motion-dom` dep (see deps section). Implementation (`use-reduced-motion.mjs`, read verbatim): `useReducedMotion` returns the OS media-query value directly (no provider needed); `useReducedMotionConfig` maps "never"→false, "always"→true, else OS value.
+- Files: `src/lib/motion.ts` (`ease.outExpo [0.16,1,0.3,1]`, `ease.inOutCubic [0.65,0,0.35,1]`; `spring.soft 120/20`, `spring.snappy 400/30` via `satisfies Transition`; `stagger.children` container `staggerChildren: 0.08` + `stagger.item` opacity/y-24 via `satisfies Variants`; `reducedTransition { duration: 0.15, ease: 'linear' }`; STARTING-values comment pointing to FASE 4; typed, no `any`), `src/hooks/useReducedMotion.ts` (thin wrapper, `?? false`). MotionConfig NOT wired globally.
+- `reducedMotion="user"` report for FASE 4: the option exists; per the installed `useReducedMotionConfig`, "user" defers to the OS media query (same value our hook reads). Global auto-disabling of transform/layout animations via MotionConfig was NOT verified in code — decide wiring in FASE 4; current approach (per-component branch on `useReducedMotion()` + `reducedTransition`) needs no provider.
+
+### Final verify T1.2-b–T1.4 (2026-10-03)
+- typecheck: `> tsc -b`, no errors (pass).
+- lint: `Found 1 warning and 0 errors … on 22 files` — only the accepted buttonVariants warning; context/provider/i18n/motion splits added ZERO warnings.
+- contrast: ALL REQUIRED PAIRS PASS (full table re-run above, identical ratios).
+- build: `1941 modules transformed`, `index-CzrN_bix.css 32.50 kB`, `index-DdTihJq5.js 268.72 kB`, postbuild copied to `dist/404.html`.
+- `git diff -- package.json` (for the shadcn move): exactly two hunks — `+"motion-dom": "^14.0.0"` in dependencies, `-"shadcn": "^4.21.1"` / `+"shadcn": "^4.21.1"` in devDependencies; version unchanged.
 
 ## Open decisions
 - ARCHITECTURE.md approved by user (with amendments).
@@ -141,7 +166,7 @@ mlsa-university-community@0.0.0 /app
 - Favicon: Vite placeholder, replace with own logo.
 
 ## Pending inputs from the user
-See `docs/SPEC.md` section 9. Plus: T1.0–T1.2 approval to proceed to T1.3–T1.4; T1.2 browser checklist results.
+See `docs/SPEC.md` section 9. Plus: T1.2-b–T1.4 approval to proceed to FASE 2; T1.2/T1.3 browser checklist results.
 
 ## Known issues
 - spotlight.tsx verbatim copy failed typecheck (TS6133 unused `React` import; TS1484 `SpringOptions` needs type-only import under verbatimModuleSyntax). Minimal fix applied and reported: dropped default `React` import, split `import type { SpringOptions }`. File otherwise verbatim. (Fix in FASE 6 T6.4 still covers listener cleanup + fill prop + loader.)
@@ -149,18 +174,11 @@ See `docs/SPEC.md` section 9. Plus: T1.0–T1.2 approval to proceed to T1.3–T1
 - Scaffold conflicts kept existing (not overwritten): `.gitignore`, `README.md`.
 - Image CMD note: `docker compose up web` fails until package.json exists; all scaffold steps overrode CMD via `docker compose run --rm web <cmd>`.
 - No `button.tsx`/`utils.ts` sync-lag speculation remains: the FASE 0 `@/` misfire cause is verified in T1.0-a; `src/lib/utils.ts` provenance (manual vs CLI) is recorded as **unknown** (one-semicolon byte difference, see T1.0-a).
-- `useTheme` has no shared context: two mounted instances (e.g. preview + navbar later) track independent state and converge only via storage reload. Single-instance use (T1.2 preview) is unaffected; lift to context in FASE 2 if a second toggle appears.
 - `npx shadcn info` prints `Preset font: geist` — registry preset metadata only; no Geist code/package remains (see T1.0-c greps).
 - Info-only contrast rows below threshold are accepted decorative defaults (borders, light green/yellow fills); recorded in T1.1, not gating.
 
-## AGENTS.md §5 self-checks (2026-10-03, before finishing T1.0)
-1. Paths exist — `ls` on 16 paths (`components.json`, `index.html`, `public/favicon.svg`, `scripts/postbuild.mjs`, `src/App.tsx`, `src/components/ui/{button,card,splite,spotlight}.tsx`, `src/index.css`, `src/lib/utils.ts`, `src/main.tsx`, `tsconfig.json`, `tsconfig.app.json`, `vercel.json`, `vite.config.ts`): all listed, none missing.
-2. Dependencies in package.json — `grep -E -o -e base-ui/react -e fontsource-variable/inter -e class-variance-authority -e '"cn"' /app/package.json` matched all 4; full `npm ls --depth=0` pasted above.
-3. DONE tasks list commands + real results — FASE 0 approval is the user's (not re-claimed); T1.0 sub-tasks each cite the exact command and its output above.
-4. Behavior claims name implementing files — T1.0 makes no theme/i18n/animation behavior claims (T1.2–T1.4 NOT STARTED). Favicon base behavior implemented by `index.html` (`%BASE_URL%`) + `vite.config.ts` (`base: process.env.VITE_BASE_PATH || '/'`), verified by `grep` of built `dist/index.html`.
-
-## AGENTS.md §5 self-checks (2026-10-03, before finishing T1.1–T1.2)
-1. Paths exist — `ls /app/src/lib/config.ts /app/src/hooks/useTheme.ts /app/src/components/ThemeToggle.tsx /app/scripts/contrast.mjs`: all 4 listed. Deleted paths confirmed gone: `/app/@`, `/app/src/App.css`, `/app/src/assets`, `/app/public/icons.svg` (all "No such file or directory"); `grep -e geist` over `package.json`+`src/index.css`+`index.html` → no matches.
-2. Dependencies in package.json — no dependency ADDED or REMOVED since the T1.0 `npm ls` paste except none (geist already removed in T1.0; `contrast` is a script, not a dep). Deps named in T1.1/T1.2 (`@base-ui/react`, `class-variance-authority`, `cn`, `lucide-react`, `@fontsource-variable/inter`) all verified in package.json by the T1.0 grep + `npm ls --depth=0` above.
-3. DONE tasks list commands + real results — T1.0-h (import greps + 5 class counts 0→1, CSS 7.01→31.01 kB), audit (full `npm audit` output summarized), T1.1 (3 contrast runs pasted as final table + iteration deltas 4.39→4.99, 4.32→4.49→4.51), T1.2 (typecheck/lint/build outputs) each cite exact commands above. T1.0 approval is the user's ("page renders the placeholder").
-4. Behavior claims name implementing files — theme behavior: `index.html` inline bootstrap script, `src/hooks/useTheme.ts` (persist-on-choice + OS-follow + class sync), `src/components/ThemeToggle.tsx` (toggle UI). Contrast behavior: `scripts/contrast.mjs` + tokens in `src/index.css`. Browser-visible results (toggle, no-flash, 360/1440px) explicitly marked UNVERIFIED with a user checklist instead of claimed.
+## AGENTS.md §5 self-checks (2026-10-03, before finishing T1.2-b–T1.4)
+1. Paths exist — `ls /app/src/lib/config.ts /app/src/hooks/useTheme.ts /app/src/components/ThemeToggle.tsx /app/scripts/contrast.mjs` (T1.2 set, all listed); new `ls` on `src/lib/motion.ts`, `src/hooks/useReducedMotion.ts`, `src/hooks/useI18n.ts`, `src/i18n/{es,en,index}.ts`, `src/components/{ThemeProvider,I18nProvider,LangToggle}.tsx` — all listed (created via Write this session; typecheck+build consume them, proving presence). Deleted paths still gone (`/app/@`, `/app/src/App.css`, `/app/src/assets`, `/app/public/icons.svg` re-confirmed T1.1 round).
+2. Dependencies in package.json — `motion-dom ^14.0.0` in dependencies (grep line 25) + `shadcn ^4.21.1` in devDependencies (`git diff` two-hunk proof above); all other deps unchanged from the pasted `npm ls` block as amended.
+3. DONE tasks list commands + real results — T1.2-b (typecheck + lint 14 files/1 warning), T1.3 (typecheck clean + TS2741 negative proof pasted + restore clean), T1.4 (node_modules greps with file:line + npm install output + typecheck), shadcn move (`git diff`, audit 0→7). Approvals cited as the user's.
+4. Behavior claims name implementing files — theme: `src/components/ThemeProvider.tsx` + `src/hooks/useTheme.ts` + `index.html` bootstrap; i18n: `src/components/I18nProvider.tsx` + `src/hooks/useI18n.ts` + `src/i18n/*`; motion: `src/lib/motion.ts` + `src/hooks/useReducedMotion.ts` (no visual output by design). Browser-visible results marked UNVERIFIED with user checklists (T1.2, T1.3); dual-toggle sync and EN-start rely on provider + detection code reviewed but not executed in a browser.

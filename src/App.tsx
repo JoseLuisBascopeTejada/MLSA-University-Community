@@ -1,8 +1,10 @@
-// TEMP: tokens preview for T1.1/T1.2 review — delete in FASE 3 (real sections).
+// TEMP: tokens + theme + i18n preview for FASE 1 review — delete in FASE 3.
 // Hardcoded strings are allowed ONLY in this file while it exists.
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { LangToggle } from '@/components/LangToggle';
+import { useI18n } from '@/hooks/useI18n';
 
 const AREAS = [
   { id: 'rrhh', name: 'RRHH' },
@@ -12,11 +14,25 @@ const AREAS = [
 ] as const;
 
 export default function App() {
+  const { locale, t } = useI18n();
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-3xl flex-col items-start gap-6 p-6">
       <p className="text-sm text-muted-foreground">TEMP: tokens preview — delete in FASE 3</p>
-      <div className="flex items-center gap-4">
-        <ThemeToggle label="Toggle theme (TEMP)" />
+      <div className="flex flex-wrap items-center gap-4">
+        <ThemeToggle label={t('theme.toggle')} />
+        <ThemeToggle label={t('theme.toggle')} />
+        <LangToggle />
+        <span className="text-sm text-muted-foreground">locale: {locale}</span>
+      </div>
+      <nav aria-label="TEMP" className="flex flex-wrap gap-4">
+        <span>{t('nav.home')}</span>
+        <span>{t('nav.about')}</span>
+        <span>{t('nav.activities')}</span>
+        <span>{t('nav.areas')}</span>
+        <span>{t('nav.join')}</span>
+        <span>{t('nav.faq')}</span>
+      </nav>
+      <div className="flex flex-wrap items-center gap-4">
         <Button type="button">Primary button</Button>
         <Button type="button" variant="outline">
           Outline button
@@ -44,6 +60,10 @@ export default function App() {
           </section>
         ))}
       </div>
+      <footer className="flex flex-col gap-2 border-t pt-4 text-sm text-muted-foreground">
+        <p>{t('footer.nonAffiliation')}</p>
+        <span>{t('footer.cookieSettings')}</span>
+      </footer>
     </main>
   );
 }

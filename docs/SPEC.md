@@ -32,7 +32,8 @@ Forms, sign-up, login, backend, database, analytics, newsletter, blog, member pr
 - **Language**: ES default; EN if browser language is English; manual toggle persists. See ARCHITECTURE.md section 5.
 - **Theme**: dark and light, light = inverted colors; follows OS preference on first visit; manual toggle persists.
 - **Colors**: Microsoft-inspired palette globally; area colors only inside area sections.
-- **Hero background**: Spline only in hero; stops once the visitor scrolls past it; opt-in via cookie banner (third-party media); static fallback otherwise. Extending to the whole page is a possible later task.
+- **Hero background**: Spline only in hero; stops once the visitor scrolls past it; opt-in via cookie banner (third-party media); static fallback otherwise. Loads ONLY if: consent AND not reduced-motion AND viewport >= tablet AND `navigator.connection.saveData` is false. Extending to the whole page is a possible later task.
+- **Navigation from legal pages**: nav links navigate to `/` and then scroll to the target section after mount.
 - **Cookie/storage notice**: banner on first visit, equal-weight Accept / Reject / Customize; categories: Necessary (always on), Third-party media (Spline, off by default). Choice can be changed from the footer ("Cookie settings").
 
 ## 6. Animations (all must degrade under prefers-reduced-motion)
@@ -50,4 +51,5 @@ WCAG 2.2 AA, keyboard accessible, tested at 360px and 1440px, both themes, both 
 - Legal responsible person/entity name.
 - Own logo and final domain (if any).
 - Hosting choice: Vercel or GitHub Pages.
-- Confirmation of whether the community is an officially recognized Microsoft program chapter (affects branding wording).
+- Community wording defaults to INDEPENDENT until the user confirms an official chapter (affects branding wording).
+- Spline demo scene is DEV-ONLY until the user confirms permission or provides their own scene.

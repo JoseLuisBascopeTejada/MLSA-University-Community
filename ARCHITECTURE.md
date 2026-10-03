@@ -1,6 +1,6 @@
 # ARCHITECTURE.md
 
-Status: **proposed — pending user approval.** Versions are NOT pinned here: the agent must install the latest stable version and verify compatibility between packages before recording it in `PROJECT_STATE.md`.
+Status: **approved by user (with the amendments below).** Versions are NOT pinned here: the agent must install the latest stable version and verify compatibility between packages before recording it in `PROJECT_STATE.md`.
 
 ## 1. Decisions
 
@@ -17,7 +17,9 @@ Status: **proposed — pending user approval.** Versions are NOT pinned here: th
 
 ## 2. Hosting compatibility (both must keep working)
 - `VITE_BASE_PATH` env var feeds Vite `base` (`/` for Vercel/custom domain, `/<repo>/` for GitHub Pages project sites).
-- Post-build step copies `dist/index.html` to `dist/404.html` (GitHub Pages SPA fallback). Add `vercel.json` rewrite to `index.html` for Vercel.
+- Post-build step: a `scripts/postbuild.mjs` (Node, cross-platform) copies `dist/index.html` to `dist/404.html` (GitHub Pages SPA fallback), wired as the `postbuild` npm script. Add `vercel.json` rewrite to `index.html` for Vercel.
+- React Router uses `basename={import.meta.env.BASE_URL}`.
+- Note: on GitHub Pages deep links served via `404.html` return HTTP 404 status (accepted limitation); Vercel uses the rewrite in `vercel.json`.
 - All asset URLs go through Vite (no absolute `/` paths in code).
 
 ## 3. Folder structure
@@ -49,8 +51,8 @@ Status: **proposed — pending user approval.** Versions are NOT pinned here: th
 - Toggle in navbar. Updates `<html lang>`, `<title>` and meta description.
 - Crossfade + blur on text swap (see section 7).
 
-## 6. Palette (proposal, tune in FASE 1)
-Brand (Microsoft-inspired): blue `#0078D4`, plus accents from the four-color family. Area colors: RRHH green, Operativa blue, Marketing orange, Finanzas y sostenibilidad yellow. Each area color needs a dark-theme and a light-theme variant that passes AA contrast for text.
+## 6. Palette (approved, tune in FASE 1)
+Global palette = Microsoft blue family (`#0078D4` as base) + neutrals only. Green, yellow and orange appear ONLY inside their own area sections. No four-color accents globally. Area colors: RRHH green, Operativa blue, Marketing orange, Finanzas y sostenibilidad yellow. Each area color needs a dark-theme and a light-theme variant that passes AA contrast for text.
 
 ## 7. Motion system (`src/lib/motion.ts`)
 - Presets: `ease.outExpo`, `ease.inOutCubic`, `spring.soft`, `spring.snappy`, `stagger.children`.
@@ -69,7 +71,7 @@ Brand (Microsoft-inspired): blue `#0078D4`, plus accents from the four-color fam
 
 ## 8. Hero background (FASE 6)
 - `SplineScene` lazy-loaded inside `Hero` only, wrapped in `Suspense` with a CSS gradient fallback.
-- Loads ONLY if: visitor accepted "third-party media" in the cookie banner AND not reduced-motion AND viewport >= tablet AND (optionally) `navigator.connection.saveData` is false.
+- Loads ONLY if: visitor accepted "third-party media" in the cookie banner AND not reduced-motion AND viewport >= tablet AND `navigator.connection.saveData` is false (extra gating approved by user).
 - When the hero leaves the viewport (IntersectionObserver) the scene must stop: first try the runtime's `stop()`/`play()` on the Spline `Application` (agent must verify these exist in the installed version); otherwise unmount the component.
 - Later (user may request): extend as fixed full-page background. Keep it behind a single `<BackgroundLayer />` so this is a small change.
 

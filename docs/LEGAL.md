@@ -22,7 +22,7 @@
 - Spline = "third-party media" category: **off by default**, opt-in. Reject and Accept have equal visual weight. Choice stored in `mlsa-consent` and changeable from the footer.
 - If analytics or any other third party is added later, this document and the banner must be updated BEFORE shipping.
 
-## 4. Non-affiliation notice (draft, adapt after confirming the community's status)
+## 4. Non-affiliation notice (default: independent wording until the user confirms an official chapter)
 - ES: "MLSA University Community es una comunidad estudiantil independiente. No está afiliada, respaldada ni patrocinada por Microsoft Corporation salvo que se indique expresamente. Microsoft y los nombres de sus productos son marcas registradas de Microsoft Corporation."
 - EN: "MLSA University Community is an independent student community. It is not affiliated with, endorsed by or sponsored by Microsoft Corporation unless expressly stated. Microsoft and its product names are trademarks of Microsoft Corporation."
 - If the community IS an official program chapter, the user must check the program's branding guidelines and replace this text accordingly.
@@ -31,6 +31,6 @@
 - [ ] No Microsoft logo or four-square mark unless written permission/guidelines allow it.
 - [ ] Fonts: Inter (SIL OFL) self-hosted; no Segoe UI embedding.
 - [ ] Icons: `lucide-react` (check license file in the installed package).
-- [ ] Spline scene: confirm the user may use that scene (own it or license allows reuse). If not, create their own in Spline.
+- [ ] Spline scene: dev-only until permission confirmed (confirm the user may use that scene — own it or license allows reuse — or provide their own scene). If not, create their own in Spline.
 - [ ] Images: own or properly licensed; keep credits in an `ASSETS.md`.
 - [ ] Third-party code: keep `THIRD_PARTY_NOTICES` generated from installed packages.
